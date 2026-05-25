@@ -1,0 +1,117 @@
+.panel {
+  background: #fffefb;
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid #f5decd;
+  box-shadow: 0 16px 34px rgba(222, 148, 111, 0.15);
+}
+
+.panel h2 {
+  margin: 0 0 14px;
+  font-family: 'Do Hyeon', sans-serif;
+  letter-spacing: 0.02em;
+  color: #3a3026;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field span {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #4a3a30;
+}
+
+.field input,
+.field select {
+  border: 1px solid #efddcf;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid #ffb172;
+  border-color: transparent;
+}
+
+.field small {
+  font-size: 0.78rem;
+  color: #7a695d;
+}
+
+.genderRow {
+  display: flex;
+  gap: 8px;
+}
+
+.genderButton {
+  border: 1px solid #efddcf;
+  background: #fff;
+  color: #5b4638;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.selected {
+  border-color: #ff8f5e;
+  background: #fff0e7;
+  color: #ce5d1f;
+}
+
+.jobGroupRow {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(110px, 160px) 1fr;
+}
+
+.summary {
+  border-radius: 12px;
+  background: #fff3e8;
+  border: 1px dashed #f1c9a9;
+  padding: 10px 12px;
+  color: #6b4b31;
+  font-size: 0.9rem;
+}
+
+.error {
+  margin: 0;
+  color: #c73b2f;
+  font-size: 0.88rem;
+}
+
+.submitButton {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(120deg, #ff7b62, #ff9f3d);
+}
+
+.submitButton:hover {
+  filter: brightness(1.04);
+}
+
+@media (max-width: 680px) {
+  .jobGroupRow {
+    grid-template-columns: 1fr;
+  }
+
+  .genderRow {
+    flex-wrap: wrap;
+  }
+}

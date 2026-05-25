@@ -1,0 +1,120 @@
+.panel {
+  background: #fffcf7;
+  border-radius: 20px;
+  border: 1px solid #f0decc;
+  padding: 20px;
+  box-shadow: 0 16px 34px rgba(214, 165, 118, 0.16);
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  font-family: 'Do Hyeon', sans-serif;
+  color: #3f3229;
+}
+
+.status {
+  margin: 0;
+  color: #69503d;
+}
+
+.controls {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.inlineForm {
+  display: flex;
+  gap: 8px;
+}
+
+.inlineForm input {
+  flex: 1;
+  border: 1px solid #efddcd;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.inlineForm button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f47f44;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.helper {
+  margin: 0;
+  color: #7a6859;
+  font-size: 0.88rem;
+}
+
+.error {
+  margin: 12px 0 0;
+  color: #b43827;
+  background: #fff0ed;
+  border: 1px solid #ffcfc8;
+  border-radius: 10px;
+  padding: 9px 10px;
+  font-size: 0.88rem;
+}
+
+.card {
+  margin-top: 14px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #f3dfc9;
+  padding: 14px;
+}
+
+.source {
+  margin: 0;
+  color: #916548;
+  font-size: 0.82rem;
+}
+
+.grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid span {
+  display: block;
+  font-size: 0.78rem;
+  color: #7a6859;
+}
+
+.grid strong {
+  color: #2f251e;
+}
+
+.primaryButton {
+  margin-top: 14px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(130deg, #ff9663, #e86749);
+}
+
+.notice {
+  margin: 14px 0 0;
+  color: #806753;
+}
+
+@media (max-width: 640px) {
+  .inlineForm {
+    flex-direction: column;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

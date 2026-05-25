@@ -1,0 +1,86 @@
+.panel {
+  background: #fffdf9;
+  border-radius: 20px;
+  border: 1px solid #f1dfcf;
+  padding: 20px;
+  box-shadow: 0 18px 36px rgba(205, 149, 103, 0.17);
+}
+
+.panel h2 {
+  margin: 0;
+  font-family: 'Do Hyeon', sans-serif;
+  color: #3f2d22;
+}
+
+.context {
+  margin: 8px 0 0;
+  color: #735846;
+  font-size: 0.9rem;
+}
+
+.reasonBox {
+  margin-top: 14px;
+  background: #fff3e7;
+  border: 1px dashed #f0c09b;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.reasonBox h3 {
+  margin: 0;
+  color: #94471f;
+}
+
+.reasonBox p {
+  margin: 8px 0 0;
+  color: #4e3a2c;
+  white-space: pre-wrap;
+}
+
+.menuSection {
+  margin-top: 16px;
+}
+
+.menuSection h3 {
+  margin: 0 0 8px;
+  color: #3e3025;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #ffe5d1;
+  color: #6f3f22;
+}
+
+.restartButton {
+  background: linear-gradient(120deg, #ff8d6d, #ffb048);
+  color: #fff;
+}
+
+.status {
+  margin: 12px 0 0;
+  color: #6c513f;
+}
+
+@media (max-width: 760px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}

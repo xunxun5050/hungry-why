@@ -1,0 +1,59 @@
+.panel {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #efdac7;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 20px 38px rgba(203, 158, 116, 0.18);
+}
+
+.spinner {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 5px solid #ffe5cc;
+  border-top-color: #ef6d4a;
+  animation: spin 0.85s linear infinite;
+}
+
+.panel h2 {
+  margin: 14px 0 4px;
+  color: #3d2c22;
+  font-family: 'Do Hyeon', sans-serif;
+}
+
+.phrase {
+  margin: 0;
+  color: #7c6352;
+  min-height: 24px;
+}
+
+.preview {
+  margin: 16px auto 0;
+  padding: 12px;
+  border-radius: 14px;
+  text-align: left;
+  background: #fff5ec;
+  border: 1px dashed #f0c9a8;
+  max-width: 680px;
+}
+
+.preview h3 {
+  margin: 0 0 6px;
+  font-size: 0.86rem;
+  color: #824827;
+}
+
+.preview p {
+  margin: 0;
+  color: #5d4739;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
