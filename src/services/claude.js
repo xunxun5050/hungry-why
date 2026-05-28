@@ -14,6 +14,22 @@ function normalizeMinutes(minutes) {
   return ((minutes % day) + day) % day;
 }
 
+function hashSeed(value) {
+  const input = String(value ?? '');
+  let hash = 0;
+
+  for (let index = 0; index < input.length; index += 1) {
+    hash = (hash * 31 + input.charCodeAt(index)) >>> 0;
+  }
+
+  return hash;
+}
+
+function pickBySeed(items, seed) {
+  if (!Array.isArray(items) || !items.length) return null;
+  return items[seed % items.length];
+}
+
 const REGIONAL_RECOMMENDATIONS = [
   {
     keys: ['도쿄', 'tokyo'],
@@ -200,6 +216,45 @@ const COUNTRY_RECOMMENDATIONS = [
   },
 ];
 
+const DOMESTIC_SHOPS_BY_MENU = {
+  '설렁탕': ['이문설농탕', '영동설렁탕'],
+  '돼지국밥': ['수변최고돼지국밥', '합천국밥집'],
+  '고기국수': ['자매국수', '올래국수'],
+  '따로국밥': ['국일따로국밥', '옛집식당'],
+  '짜장면': ['공화춘', '신승반점'],
+  '전주비빔밥': ['한국집', '가족회관'],
+  '언양불고기': ['언양기와집불고기', '진미불고기'],
+  '김치찌개 정식': ['은주정', '옥동식당'],
+  '제육덮밥': ['봉추찜닭', '백채김치찌개'],
+  '비빔밥': ['고궁', '한국관'],
+  '물냉면 + 만두': ['을밀대', '봉피양'],
+};
+
+const OVERSEAS_FAMOUS_SHOPS_BY_CITY = [
+  { keys: ['도쿄', 'tokyo'], names: ['이치란 라멘 신주쿠점', 'AFURI 에비스'] },
+  { keys: ['오사카', 'osaka'], names: ['오코노미야키 미즈노', '치보 도톤보리'] },
+  { keys: ['교토', 'kyoto'], names: ['오쿠탄 난젠지점', '준세이'] },
+  { keys: ['후쿠오카', 'fukuoka'], names: ['이치란 본점', '하카타 잇푸도'] },
+  { keys: ['삿포로', 'sapporo'], names: ['스미레 본점', '멘야 사이미'] },
+  { keys: ['뉴욕', 'newyork', 'new york'], names: ["Joe's Pizza", 'Prince Street Pizza'] },
+  { keys: ['런던', 'london'], names: ['Poppies Fish & Chips', 'The Mayfair Chippy'] },
+  { keys: ['파리', 'paris'], names: ['Le Relais de l’Entrecôte', 'Bouillon Chartier'] },
+  { keys: ['방콕', 'bangkok'], names: ['Thipsamai Pad Thai', 'Somboon Seafood'] },
+  { keys: ['타이베이', 'taipei'], names: ['Yong Kang Beef Noodle', 'Liu Shandong Beef Noodles'] },
+  { keys: ['홍콩', 'hongkong', 'hong kong'], names: ['Mak’s Noodle', 'Tsim Chai Kee Noodle'] },
+  { keys: ['싱가포르', 'singapore'], names: ['Tian Tian Hainanese Chicken Rice', '328 Katong Laksa'] },
+];
+
+const OVERSEAS_FAMOUS_SHOPS_BY_MENU = {
+  '마르게리타 피자': ['L’Antica Pizzeria da Michele', 'Gino e Toto Sorbillo'],
+  '팟타이': ['Thipsamai Pad Thai', 'Baan Phadthai'],
+  '우육면': ['Yong Kang Beef Noodle', 'Lao Shandong Homemade Noodles'],
+  '완탕면': ['Mak’s Noodle', 'Ho Hung Kee'],
+  '차슈덮밥': ['Joy Hing Roasted Meat', 'Yat Lok'],
+  '쌀국수': ['Pho Hoa', 'Pho Quynh'],
+  '하이난 치킨라이스': ['Tian Tian Hainanese Chicken Rice', 'Boon Tong Kee'],
+};
+
 function parseClockTime(timeText) {
   const text = String(timeText ?? '');
   const match = text.match(/(\d{1,2})\s*:\s*(\d{2})/);
@@ -247,6 +302,12 @@ function normalizeCountryToken(city) {
 
 function normalizeCountryKey(city) {
   return normalizeCountryToken(city).toLowerCase().replace(/\s+/g, '');
+}
+
+function isDomesticLocation(city) {
+  return /(서울|부산|대구|인천|광주|대전|울산|제주|전주|경주|대한민국|한국|korea)/i.test(
+    String(city ?? '')
+  );
 }
 
 function inferMealType(minutesOfDay) {
@@ -314,63 +375,78 @@ function buildJobFlavor(profile) {
   return `${jobCategory} 업무 리듬 때문에 식사 후에도 간헐적인 출출함이 올라올 수 있어요.`;
 }
 
-function pickRegionalRecommendation(context) {
+function collectRegionalRecommendations(context) {
   const cityKey = normalizeCityKey(context.city);
   const countryKey = normalizeCountryKey(context.city);
 
-  const cityMatched = REGIONAL_RECOMMENDATIONS.find((item) =>
+  const cityMatched = REGIONAL_RECOMMENDATIONS.filter((item) =>
     item.keys.some((key) => cityKey.includes(key))
   );
 
-  if (cityMatched) {
-    return {
-      menu: cityMatched.menu,
-      why: cityMatched.why,
-    };
+  if (cityMatched.length) {
+    return cityMatched.map((item) => ({ menu: item.menu, why: item.why }));
   }
 
-  if (!countryKey) return null;
+  if (!countryKey) return [];
 
-  const countryMatched = COUNTRY_RECOMMENDATIONS.find((item) =>
+  const countryMatched = COUNTRY_RECOMMENDATIONS.filter((item) =>
     item.keys.some((key) => countryKey.includes(key))
   );
 
-  if (!countryMatched) return null;
-
-  return {
-    menu: countryMatched.menu,
-    why: countryMatched.why,
-  };
+  return countryMatched.map((item) => ({ menu: item.menu, why: item.why }));
 }
 
-function buildStoreLinks(city, menu) {
+function buildSearchKeyword(menu) {
+  const text = String(menu ?? '').trim();
+  if (!text) return '맛집';
+  const primary = text.split('+')[0].trim();
+  return primary || text;
+}
+
+function buildDomesticStoreLinks(city, menu) {
   const cityToken = normalizeCityToken(city) || '현재 위치';
-  const query = `${cityToken} ${menu}`;
-  const encodedQuery = encodeURIComponent(query);
-  const isKoreanLocation = /(서울|부산|대구|인천|광주|대전|울산|제주|대한민국|한국)/.test(
-    String(city ?? '')
-  );
+  const keyword = buildSearchKeyword(menu);
+  const stores =
+    DOMESTIC_SHOPS_BY_MENU[menu] ??
+    [`현지 인기 ${keyword}집`, `로컬 추천 ${keyword}집`];
 
-  const links = [
-    {
-      label: 'Google 지도에서 찾기',
-      url: `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`,
-    },
-  ];
+  return stores.slice(0, 2).map((storeName) => ({
+    name: storeName,
+    url: `https://map.naver.com/p/search/${encodeURIComponent(`${cityToken} ${storeName}`)}`,
+  }));
+}
 
-  if (isKoreanLocation) {
-    links.push({
-      label: '네이버지도에서 찾기',
-      url: `https://map.naver.com/p/search/${encodedQuery}`,
-    });
-  } else {
-    links.push({
-      label: 'Google 검색으로 가게 찾기',
-      url: `https://www.google.com/search?q=${encodedQuery}+restaurant`,
-    });
+function buildOverseasFamousStores(city, menu) {
+  const byMenu = OVERSEAS_FAMOUS_SHOPS_BY_MENU[menu];
+  if (Array.isArray(byMenu) && byMenu.length) {
+    return byMenu.slice(0, 2);
   }
 
-  return links.slice(0, 2);
+  const cityKey = normalizeCityKey(city);
+  const byCity = OVERSEAS_FAMOUS_SHOPS_BY_CITY.find((item) =>
+    item.keys.some((key) => cityKey.includes(key))
+  );
+
+  if (byCity?.names?.length) {
+    return byCity.names.slice(0, 2);
+  }
+
+  const cityToken = normalizeCityToken(city) || '현지';
+  return [`${cityToken} 인기 ${menu} 전문점`, `${cityToken} 로컬 ${menu} 맛집`];
+}
+
+function buildRecommendationSeed(profile, context) {
+  const parts = [
+    context.city,
+    context.time,
+    context.dayOfWeek,
+    profile.lastMealHours,
+    profile.hungerLevel,
+    profile.jobCategory,
+    profile.jobDetail,
+  ];
+
+  return hashSeed(parts.join('|'));
 }
 
 function buildReason(profile, context) {
@@ -408,70 +484,99 @@ function buildReason(profile, context) {
   return `${name}님, ${time} ${dayOfWeek} 현재 ${intensityLine} 입 심심함이 배고픔으로 번역되는 구간에 들어왔어요. 마지막 식사 후 ${lastMealHours}시간 경과라 몸도 어느 정도 연료를 다시 원합니다. ${jobFlavor} ${weatherFlavor} 조금 말이 안 되지만 오늘 배고픔의 정체는 생리학과 분위기의 합작품이에요.`;
 }
 
-function buildFallbackRecommendation(profile, context) {
+function buildFallbackRecommendations(profile, context) {
   const hungerLevel = toNumber(profile.hungerLevel, 3);
   const lastMealHours = Math.max(0, toNumber(profile.lastMealHours, 4));
   const temp = toNumber(context.temp, 20);
   const clock = parseClockTime(context.time);
 
   const isLateEvening = clock.hour >= 20 || clock.hour < 3;
+  const options = [];
 
   if (lastMealHours <= 1.5) {
     if (isLateEvening) {
-      return {
+      options.push({
         menu: '그릭요거트 + 바나나 + 견과류',
         why: '저녁 직후 출출함은 가벼운 간식으로 끊어야 밤에 부담이 적고 만족감이 좋아요.',
-      };
+      });
     }
 
-    return {
+    options.push({
       menu: '김밥 반줄 + 따뜻한 차',
       why: '식사 직후 허기는 양보다 템포 조절이 중요해서, 가볍게 입 심심함만 달래기 좋아요.',
-    };
+    });
+
+    options.push({
+      menu: '두유 + 통밀 샌드위치',
+      why: '가벼운 탄수화물과 단백질 조합으로 출출함을 부드럽게 잠재우기 좋아요.',
+    });
+
+    return options;
   }
 
   if (lastMealHours >= 6 || hungerLevel >= 4) {
     if (temp <= 10) {
-      return {
+      options.push({
         menu: '돼지국밥',
         why: '오랜 공복 + 낮은 기온 조합엔 따뜻하고 든든한 한 그릇이 회복 속도가 가장 좋아요.',
-      };
+      });
     }
 
     if (temp >= 28) {
-      return {
+      options.push({
         menu: '물냉면 + 만두',
         why: '더운 날 강한 허기에는 수분 보충과 탄수화물 리필을 동시에 잡는 조합이 잘 맞아요.',
-      };
+      });
     }
 
-    return {
+    options.push({
       menu: '제육덮밥',
       why: '지금은 맛과 포만감의 균형이 중요해서, 단짠 단백질 조합이 만족도를 높여줘요.',
-    };
+    });
+
+    options.push({
+      menu: '가츠동',
+      why: '강한 허기 타이밍엔 단백질과 탄수화물을 빠르게 보충하기 좋아요.',
+    });
+
+    return options;
   }
 
   if (isLateEvening) {
-    return {
+    options.push({
       menu: '연어 포케',
       why: '늦은 시간엔 너무 무겁지 않으면서도 단백질이 있는 메뉴가 다음날 컨디션에 유리해요.',
-    };
+    });
   }
 
-  return {
+  options.push({
     menu: '비빔밥',
     why: '지금 타이밍에는 과하지 않게 탄단지를 채우는 한 그릇 메뉴가 가장 안정적이에요.',
-  };
+  });
+
+  options.push({
+    menu: '온소바 + 주먹밥',
+    why: '속 부담은 줄이고 포만감은 적당히 챙기기 좋은 조합이에요.',
+  });
+
+  return options;
 }
 
 function buildSingleRecommendation(profile, context) {
-  const regional = pickRegionalRecommendation(context);
-  const fallback = buildFallbackRecommendation(profile, context);
-  const selected = regional ?? fallback;
+  const seed = buildRecommendationSeed(profile, context);
+  const regionalCandidates = collectRegionalRecommendations(context);
+  const fallbackCandidates = buildFallbackRecommendations(profile, context);
+  const selected = regionalCandidates.length
+    ? pickBySeed(regionalCandidates, seed)
+    : pickBySeed(fallbackCandidates, seed);
+  const domestic = isDomesticLocation(context.city);
+  const safeSelected = selected ?? fallbackCandidates[0];
 
   return {
-    ...selected,
-    links: buildStoreLinks(context.city, selected.menu),
+    ...safeSelected,
+    storeType: domestic ? 'domestic' : 'overseas',
+    storeLinks: domestic ? buildDomesticStoreLinks(context.city, safeSelected.menu) : [],
+    famousStores: domestic ? [] : buildOverseasFamousStores(context.city, safeSelected.menu),
   };
 }
 

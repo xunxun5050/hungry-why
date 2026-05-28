@@ -36,3 +36,20 @@
   font-size: 0.82rem;
   text-decoration: none;
 }
+
+.famousStores {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.famousStores span {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #e7d6c8;
+  background: #f8f3ee;
+  color: #684d3c;
+  font-size: 0.82rem;
+}

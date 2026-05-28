@@ -7,11 +7,29 @@ function buildShareText(profile, weatherContext, result) {
   const env = `현재 ${weatherContext.city}, ${weatherContext.temp}°C, ${weatherContext.weatherStatus}`;
   const reason = `이유: ${result.reason}`;
   const recommendation = `지금 추천 메뉴: ${result.recommendation.menu} - ${result.recommendation.why}`;
-  const links = Array.isArray(result.recommendation.links)
-    ? result.recommendation.links.map((link, index) => `${index + 1}. ${link.label}: ${link.url}`).join('\n')
-    : '';
+  const domesticLinks =
+    result.recommendation.storeType === 'domestic' && Array.isArray(result.recommendation.storeLinks)
+      ? result.recommendation.storeLinks
+          .slice(0, 2)
+          .map((store, index) => `${index + 1}. ${store.name}: ${store.url}`)
+          .join('\n')
+      : '';
+  const overseasStores =
+    result.recommendation.storeType === 'overseas' && Array.isArray(result.recommendation.famousStores)
+      ? result.recommendation.famousStores
+          .slice(0, 2)
+          .map((storeName, index) => `${index + 1}. ${storeName}`)
+          .join('\n')
+      : '';
 
-  return [head, env, reason, recommendation, links ? `가게 찾기 링크\n${links}` : '']
+  return [
+    head,
+    env,
+    reason,
+    recommendation,
+    domesticLinks ? `네이버 지도 가게 링크\n${domesticLinks}` : '',
+    overseasStores ? `해외 유명 가게\n${overseasStores}` : '',
+  ]
     .filter(Boolean)
     .join('\n\n');
 }
@@ -110,7 +128,9 @@ export default function ResultPage({ profile, weatherContext, result, onRestart 
             title={result.recommendation.menu}
             reason={result.recommendation.why}
             tone="now"
-            links={result.recommendation.links}
+            storeType={result.recommendation.storeType}
+            storeLinks={result.recommendation.storeLinks}
+            famousStores={result.recommendation.famousStores}
           />
         </div>
       </div>
