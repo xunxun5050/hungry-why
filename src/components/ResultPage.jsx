@@ -7,8 +7,13 @@ function buildShareText(profile, weatherContext, result) {
   const env = `현재 ${weatherContext.city}, ${weatherContext.temp}°C, ${weatherContext.weatherStatus}`;
   const reason = `이유: ${result.reason}`;
   const recommendation = `지금 추천 메뉴: ${result.recommendation.menu} - ${result.recommendation.why}`;
+  const links = Array.isArray(result.recommendation.links)
+    ? result.recommendation.links.map((link, index) => `${index + 1}. ${link.label}: ${link.url}`).join('\n')
+    : '';
 
-  return [head, env, reason, recommendation].join('\n\n');
+  return [head, env, reason, recommendation, links ? `가게 찾기 링크\n${links}` : '']
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 export default function ResultPage({ profile, weatherContext, result, onRestart }) {
@@ -99,12 +104,13 @@ export default function ResultPage({ profile, weatherContext, result, onRestart 
       </article>
 
       <div className={styles.menuSection}>
-        <h3>지금 먹기 추천 메뉴</h3>
+        <h3>지금 먹기 추천 메뉴 (지역 반영)</h3>
         <div className={styles.cardGrid}>
           <MenuCard
             title={result.recommendation.menu}
             reason={result.recommendation.why}
             tone="now"
+            links={result.recommendation.links}
           />
         </div>
       </div>

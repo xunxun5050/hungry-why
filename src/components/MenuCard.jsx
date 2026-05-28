@@ -6,7 +6,7 @@ const TONE_EMOJI = {
   now: '🍽️',
 };
 
-export default function MenuCard({ title, reason, tone }) {
+export default function MenuCard({ title, reason, tone, links = [] }) {
   return (
     <article className={styles.card}>
       <h4>
@@ -14,6 +14,15 @@ export default function MenuCard({ title, reason, tone }) {
         <span>{title}</span>
       </h4>
       <p>{reason}</p>
+      {Array.isArray(links) && links.length ? (
+        <div className={styles.links}>
+          {links.slice(0, 2).map((link) => (
+            <a key={`${link.label}-${link.url}`} href={link.url} target="_blank" rel="noreferrer">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      ) : null}
     </article>
   );
 }

@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './ProfileForm.module.css';
 
-const JOB_OPTIONS = ['사무직', '개발자', '학생', '서비스직', '크리에이터', '자영업', '기타'];
+const JOB_OPTIONS = ['', '사무직', '개발자', '학생', '서비스직', '크리에이터', '자영업', '기타'];
 
 function normalizeProfile(initialValue) {
   return {
     name: initialValue.name ?? '',
     gender: initialValue.gender ?? 'none',
     age: initialValue.age ?? 29,
-    jobCategory: initialValue.jobCategory ?? '사무직',
+    jobCategory: initialValue.jobCategory ?? '',
     jobDetail: initialValue.jobDetail ?? '',
     lastMealHours: initialValue.lastMealHours ?? 4,
     hungerLevel: initialValue.hungerLevel ?? 3,
@@ -19,6 +19,22 @@ function genderLabel(gender) {
   if (gender === 'male') return '남';
   if (gender === 'female') return '여';
   return '선택 안 함';
+}
+
+function jobSummary(form) {
+  if (form.jobCategory && form.jobDetail) {
+    return `${form.jobCategory} (${form.jobDetail})`;
+  }
+
+  if (form.jobDetail) {
+    return form.jobDetail;
+  }
+
+  if (form.jobCategory) {
+    return form.jobCategory;
+  }
+
+  return '하는 일 미입력';
 }
 
 export default function ProfileForm({ initialValue, onSubmit }) {
@@ -60,6 +76,7 @@ export default function ProfileForm({ initialValue, onSubmit }) {
       age,
       lastMealHours: Number(form.lastMealHours),
       hungerLevel: Number(form.hungerLevel),
+      jobCategory: form.jobCategory.trim(),
       jobDetail: form.jobDetail.trim(),
     });
   };
@@ -121,7 +138,7 @@ export default function ProfileForm({ initialValue, onSubmit }) {
             >
               {JOB_OPTIONS.map((option) => (
                 <option key={option} value={option}>
-                  {option}
+                  {option || '선택 안 함'}
                 </option>
               ))}
             </select>
@@ -129,7 +146,7 @@ export default function ProfileForm({ initialValue, onSubmit }) {
               type="text"
               value={form.jobDetail}
               onChange={(event) => handleField('jobDetail', event.target.value)}
-              placeholder="예: 프론트엔드 개발"
+              placeholder="예: 프론트엔드 개발 (안 써도 됨)"
             />
           </div>
         </label>
@@ -159,8 +176,7 @@ export default function ProfileForm({ initialValue, onSubmit }) {
         </label>
 
         <div className={styles.summary}>
-          <strong>{form.name || '익명'}</strong> · {genderLabel(form.gender)} · {form.age}세 ·{' '}
-          {form.jobDetail ? `${form.jobCategory} (${form.jobDetail})` : form.jobCategory}
+          <strong>{form.name || '익명'}</strong> · {genderLabel(form.gender)} · {form.age}세 · {jobSummary(form)}
         </div>
 
         {error ? <p className={styles.error}>{error}</p> : null}

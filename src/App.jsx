@@ -13,7 +13,7 @@ const DEFAULT_PROFILE = {
   name: '',
   gender: 'none',
   age: 29,
-  jobCategory: '사무직',
+  jobCategory: '',
   jobDetail: '',
   lastMealHours: 4,
   hungerLevel: 3,

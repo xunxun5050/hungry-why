@@ -82,7 +82,7 @@ export default function WeatherCard({ onConfirm }) {
             type="text"
             value={manualCity}
             onChange={(event) => setManualCity(event.target.value)}
-            placeholder="예: Seoul, Tokyo, Busan"
+            placeholder="예: 서울, 도쿄, Busan"
           />
           <button type="submit">오늘 날씨 불러오기</button>
         </label>
