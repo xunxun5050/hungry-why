@@ -21,6 +21,16 @@ const REGIONAL_RECOMMENDATIONS = [
     why: '도쿄에서 대표적으로 많이 찾는 메뉴라 지역 분위기와 잘 맞아요.',
   },
   {
+    keys: ['나고야', 'nagoya'],
+    menu: '미소카츠',
+    why: '나고야 대표 메뉴라 단짠한 지역 특색을 제대로 느낄 수 있어요.',
+  },
+  {
+    keys: ['요코하마', 'yokohama'],
+    menu: '이에케 라멘',
+    why: '요코하마 계열 라멘은 진한 국물로 허기 해소에 좋아요.',
+  },
+  {
     keys: ['오사카', 'osaka'],
     menu: '오코노미야키',
     why: '오사카를 대표하는 분식 메뉴라 여행 기분도 같이 살릴 수 있어요.',
@@ -65,6 +75,129 @@ const REGIONAL_RECOMMENDATIONS = [
     menu: '짜장면',
     why: '인천 차이나타운 계열의 지역 상징 메뉴로 선택지 가치가 높아요.',
   },
+  {
+    keys: ['대전', 'daejeon'],
+    menu: '성심당 튀김소보로 + 샌드위치',
+    why: '대전에서 유명한 빵 라인업이라 가볍게 출출함 달래기 좋아요.',
+  },
+  {
+    keys: ['광주', 'gwangju'],
+    menu: '애호박찌개',
+    why: '광주권에서 자주 찾는 구수한 메뉴로 속을 편안하게 채워줘요.',
+  },
+  {
+    keys: ['울산', 'ulsan'],
+    menu: '언양불고기',
+    why: '울산/언양 지역 대표 고기 메뉴라 포만감이 확실해요.',
+  },
+  {
+    keys: ['전주', 'jeonju'],
+    menu: '전주비빔밥',
+    why: '전주를 대표하는 메뉴라 지역색과 균형 잡힌 한 끼를 같이 챙길 수 있어요.',
+  },
+  {
+    keys: ['경주', 'gyeongju'],
+    menu: '경주 교리김밥 + 잔치국수',
+    why: '경주에서 인기 있는 조합이라 가볍고도 만족감 있는 한 끼예요.',
+  },
+  {
+    keys: ['뉴욕', 'newyork', 'new york'],
+    menu: '뉴욕 페퍼로니 피자 슬라이스',
+    why: '뉴욕 대표 스트리트 푸드라 빠르게 허기를 채우기 좋아요.',
+  },
+  {
+    keys: ['로스앤젤레스', '엘에이', 'losangeles', 'los angeles', 'la'],
+    menu: 'LA 타코',
+    why: 'LA에서 흔하게 즐기는 메뉴라 지역 무드와 잘 맞아요.',
+  },
+  {
+    keys: ['런던', 'london'],
+    menu: '피시 앤 칩스',
+    why: '런던 대표 메뉴라 지역 특색을 살린 선택지예요.',
+  },
+  {
+    keys: ['파리', 'paris'],
+    menu: '크로크무슈',
+    why: '파리식 카페 메뉴로 가볍지만 만족감 있게 먹기 좋아요.',
+  },
+  {
+    keys: ['방콕', 'bangkok'],
+    menu: '팟타이',
+    why: '방콕에서 대중적으로 사랑받는 메뉴라 실패 확률이 낮아요.',
+  },
+  {
+    keys: ['타이베이', 'taipei'],
+    menu: '우육면',
+    why: '타이베이 대표급 면 요리라 든든하고 만족감이 높아요.',
+  },
+  {
+    keys: ['홍콩', 'hongkong', 'hong kong'],
+    menu: '완탕면',
+    why: '홍콩에서 친숙한 한 그릇 메뉴로 출출함 해결에 좋아요.',
+  },
+  {
+    keys: ['싱가포르', 'singapore'],
+    menu: '하이난 치킨라이스',
+    why: '싱가포르 대표 메뉴로 깔끔하고 든든한 한 끼예요.',
+  },
+];
+
+const COUNTRY_RECOMMENDATIONS = [
+  {
+    keys: ['대한민국', '한국', 'korea', 'southkorea', 'south korea'],
+    menu: '김치찌개 정식',
+    why: '한국에서는 접근성이 좋고 만족도가 높은 국민 메뉴라 안정적이에요.',
+  },
+  {
+    keys: ['일본', 'japan'],
+    menu: '돈카츠 정식',
+    why: '일본 전역에서 찾기 쉬운 메뉴라 어디서든 무난하게 만족감을 주기 좋아요.',
+  },
+  {
+    keys: ['미국', 'usa', 'unitedstates', 'united states'],
+    menu: '버거 + 감자튀김',
+    why: '미국권에서 접근성이 높아 빠르게 허기를 해소하기 쉬워요.',
+  },
+  {
+    keys: ['영국', 'uk', 'unitedkingdom', 'united kingdom'],
+    menu: '잉글리시 브렉퍼스트 플레이트',
+    why: '영국권에서 든든하게 먹기 좋은 전형적인 선택지예요.',
+  },
+  {
+    keys: ['프랑스', 'france'],
+    menu: '스테이크 프리트',
+    why: '프랑스권에서 익숙하고 만족도 높은 클래식 조합이에요.',
+  },
+  {
+    keys: ['이탈리아', 'italy'],
+    menu: '마르게리타 피자',
+    why: '이탈리아권에서 접근성이 좋은 대표 메뉴라 실패 확률이 낮아요.',
+  },
+  {
+    keys: ['태국', 'thailand'],
+    menu: '카오만가이',
+    why: '태국에서 부담 없이 찾기 쉬운 메뉴라 가벼운 허기에 잘 맞아요.',
+  },
+  {
+    keys: ['대만', 'taiwan'],
+    menu: '루러우판',
+    why: '대만에서 대중적인 한 그릇 메뉴라 빠르고 든든하게 먹기 좋아요.',
+  },
+  {
+    keys: ['홍콩', 'hongkong', 'hong kong'],
+    menu: '차슈덮밥',
+    why: '홍콩권에서 흔하게 볼 수 있는 메뉴라 접근성이 좋아요.',
+  },
+  {
+    keys: ['베트남', 'vietnam'],
+    menu: '쌀국수',
+    why: '베트남 전역에서 무난하게 즐길 수 있어 컨디션 회복에 좋아요.',
+  },
+  {
+    keys: ['싱가포르', 'singapore'],
+    menu: '락사',
+    why: '싱가포르의 대표 면 요리로 지역색과 포만감을 함께 챙길 수 있어요.',
+  },
 ];
 
 function parseClockTime(timeText) {
@@ -100,6 +233,20 @@ function normalizeCityToken(city) {
 
 function normalizeCityKey(city) {
   return normalizeCityToken(city).toLowerCase().replace(/\s+/g, '');
+}
+
+function normalizeCountryToken(city) {
+  const parts = String(city ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (parts.length <= 1) return '';
+  return parts.slice(1).join(' ');
+}
+
+function normalizeCountryKey(city) {
+  return normalizeCountryToken(city).toLowerCase().replace(/\s+/g, '');
 }
 
 function inferMealType(minutesOfDay) {
@@ -169,17 +316,30 @@ function buildJobFlavor(profile) {
 
 function pickRegionalRecommendation(context) {
   const cityKey = normalizeCityKey(context.city);
-  if (!cityKey) return null;
+  const countryKey = normalizeCountryKey(context.city);
 
-  const matched = REGIONAL_RECOMMENDATIONS.find((item) =>
+  const cityMatched = REGIONAL_RECOMMENDATIONS.find((item) =>
     item.keys.some((key) => cityKey.includes(key))
   );
 
-  if (!matched) return null;
+  if (cityMatched) {
+    return {
+      menu: cityMatched.menu,
+      why: cityMatched.why,
+    };
+  }
+
+  if (!countryKey) return null;
+
+  const countryMatched = COUNTRY_RECOMMENDATIONS.find((item) =>
+    item.keys.some((key) => countryKey.includes(key))
+  );
+
+  if (!countryMatched) return null;
 
   return {
-    menu: matched.menu,
-    why: matched.why,
+    menu: countryMatched.menu,
+    why: countryMatched.why,
   };
 }
 
