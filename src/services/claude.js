@@ -255,6 +255,44 @@ const OVERSEAS_FAMOUS_SHOPS_BY_MENU = {
   '하이난 치킨라이스': ['Tian Tian Hainanese Chicken Rice', 'Boon Tong Kee'],
 };
 
+const JOB_MEME_LIBRARY = {
+  developer: [
+    '브라우저 탭이 20개를 넘는 순간, 위장도 자동으로 로딩 인디케이터를 켭니다.',
+    '버그 1개 해결당 칼로리 3이 소모된다는 개발자 체감 통계가 오늘도 맞아떨어졌어요.',
+    '머리는 async로 버티는데 배는 sync로 즉시 처리 요청을 보내는 중이에요.',
+  ],
+  student: [
+    '교재 10페이지마다 집중력과 당이 같이 빠지는 학생 모드가 발동됐어요.',
+    '암기량이 늘수록 뇌가 보상 간식을 청구하는 것은 꽤 유명한 현상입니다.',
+    '필기 속도는 올라가고 혈당 그래프는 내려가는 타이밍이라 출출함이 커졌어요.',
+  ],
+  service: [
+    '웃으며 응대하는 동안 체력 바가 보이지 않게 닳아서 허기가 빨리 옵니다.',
+    '현장 템포가 빠를수록 몸은 중간 보급을 요청하는 경향이 강해요.',
+    '계속 서 있거나 움직이는 리듬이 공복 알림을 앞당긴 상태예요.',
+  ],
+  creator: [
+    '아이디어를 오래 붙잡으면 뇌가 연료를 더 쓰고 간식 팝업을 띄우곤 해요.',
+    '창작 모드에서 한 장면 더 다듬을수록 위장은 컷 편집 없이 본편에 들어갑니다.',
+    '디테일 집착이 올라간 날은 칼로리 소모도 몰래 같이 올라가요.',
+  ],
+  selfEmployed: [
+    '일정과 식사 타이밍이 충돌하면 배고픔이 공지 없이 긴급 점검을 시작해요.',
+    '사장님 모드는 멀티태스킹이 많아서 공복 신호가 갑자기 튀어나오곤 합니다.',
+    '업무 우선순위 조정 중에 식사가 밀리면 허기 알람이 바로 승격됩니다.',
+  ],
+  office: [
+    '회의가 길어지면 집중력과 포만감이 같이 증발하는 사무실 법칙이 발동돼요.',
+    '앉아서 일해도 뇌 사용량이 누적되면 출출함은 충분히 빨리 올라옵니다.',
+    '업무 마감 시간대엔 손보다 뇌가 먼저 간식 버튼을 누르는 경우가 많아요.',
+  ],
+  general: [
+    '오늘의 허기는 몸과 기분이 합작한 특별 콜라보라고 보면 거의 맞아요.',
+    '집중 모드가 길어질수록 출출함이 살짝 과장 재생되는 경향이 있어요.',
+    '입이 심심한 신호와 실제 공복이 동시에 와서 체감 배고픔이 커진 상황입니다.',
+  ],
+};
+
 function parseClockTime(timeText) {
   const text = String(timeText ?? '');
   const match = text.match(/(\d{1,2})\s*:\s*(\d{2})/);
@@ -339,40 +377,74 @@ function buildWeatherFlavor(context) {
   return `${city}의 ${weather} ${temp}°C, 습도 ${humidity}% 조합이 입 심심함을 살짝 증폭시키는 타이밍이에요.`;
 }
 
-function buildJobFlavor(profile) {
+function inferJobPersona(source) {
+  if (source.includes('개발')) return 'developer';
+  if (source.includes('학생') || source.includes('공부')) return 'student';
+  if (source.includes('서비스') || source.includes('매장') || source.includes('판매')) return 'service';
+  if (source.includes('크리에이터') || source.includes('디자인') || source.includes('영상')) {
+    return 'creator';
+  }
+  if (source.includes('자영업') || source.includes('사업')) return 'selfEmployed';
+  if (source.includes('사무') || source.includes('office')) return 'office';
+  return 'general';
+}
+
+function pickJobMeme(persona, seed) {
+  const pool = JOB_MEME_LIBRARY[persona] ?? JOB_MEME_LIBRARY.general;
+  return pickBySeed(pool, seed) ?? pool[0];
+}
+
+function buildJobFlavor(profile, seed) {
   const jobCategory = String(profile.jobCategory ?? '').trim();
   const jobDetail = String(profile.jobDetail ?? '').trim();
   const source = `${jobCategory} ${jobDetail}`.trim().toLowerCase();
+  const persona = inferJobPersona(source);
+  const memeLine = pickJobMeme(persona, seed + source.length);
 
   if (!source) {
-    return '하는 일을 비워둔 만큼, 지금은 몸의 배고픔 신호 자체에 더 민감해진 상태예요.';
+    const generalMeme = pickJobMeme('general', seed + 101);
+    return `하는 일을 비워둔 만큼, 지금은 몸의 배고픔 신호 자체에 더 민감해진 상태예요. ${generalMeme}`;
   }
 
   if (source.includes('개발')) {
-    return '개발 업무 특성상 집중 시간이 길어져, 뇌가 빠른 에너지를 찾는 속도가 더 빨라졌어요.';
+    return `개발 업무 특성상 집중 시간이 길어져, 뇌가 빠른 에너지를 찾는 속도가 더 빨라졌어요. ${memeLine}`;
   }
 
   if (source.includes('학생') || source.includes('공부')) {
-    return '공부 흐름이 길어질수록 간헐적인 출출함이 더 자주 올라오는 패턴이 나타나기 쉬워요.';
+    return `공부 흐름이 길어질수록 간헐적인 출출함이 더 자주 올라오는 패턴이 나타나기 쉬워요. ${memeLine}`;
   }
 
   if (source.includes('서비스') || source.includes('매장') || source.includes('판매')) {
-    return '대면/현장 업무가 이어지면 체력 소모가 빨라져 공복감이 더 일찍 느껴질 수 있어요.';
+    return `대면/현장 업무가 이어지면 체력 소모가 빨라져 공복감이 더 일찍 느껴질 수 있어요. ${memeLine}`;
   }
 
   if (source.includes('크리에이터') || source.includes('디자인') || source.includes('영상')) {
-    return '아이디어를 오래 쥐어짜는 작업은 생각보다 에너지를 많이 써서 군것질 신호가 빨리 와요.';
+    return `아이디어를 오래 쥐어짜는 작업은 생각보다 에너지를 많이 써서 군것질 신호가 빨리 와요. ${memeLine}`;
   }
 
   if (source.includes('자영업') || source.includes('사업')) {
-    return '자영업 리듬은 식사 타이밍이 흔들리기 쉬워, 출출함 신호가 예고 없이 올라오곤 해요.';
+    return `자영업 리듬은 식사 타이밍이 흔들리기 쉬워, 출출함 신호가 예고 없이 올라오곤 해요. ${memeLine}`;
   }
 
   if (jobDetail) {
-    return `${jobDetail} 업무 특성상 페이스가 몰리면 배고픔 신호가 과장되어 느껴질 수 있어요.`;
+    return `${jobDetail} 업무 특성상 페이스가 몰리면 배고픔 신호가 과장되어 느껴질 수 있어요. ${memeLine}`;
   }
 
-  return `${jobCategory} 업무 리듬 때문에 식사 후에도 간헐적인 출출함이 올라올 수 있어요.`;
+  return `${jobCategory} 업무 리듬 때문에 식사 후에도 간헐적인 출출함이 올라올 수 있어요. ${memeLine}`;
+}
+
+function buildReasonSeed(profile, context) {
+  const parts = [
+    profile.jobCategory,
+    profile.jobDetail,
+    profile.lastMealHours,
+    profile.hungerLevel,
+    context.time,
+    context.dayOfWeek,
+    context.weatherStatus,
+  ];
+
+  return hashSeed(parts.join('|'));
 }
 
 function collectRegionalRecommendations(context) {
@@ -455,7 +527,8 @@ function buildReason(profile, context) {
   const dayOfWeek = context.dayOfWeek ?? '';
   const hungerLevel = toNumber(profile.hungerLevel, 3);
   const lastMealHours = Math.max(0, toNumber(profile.lastMealHours, 4));
-  const jobFlavor = buildJobFlavor(profile);
+  const reasonSeed = buildReasonSeed(profile, context);
+  const jobFlavor = buildJobFlavor(profile, reasonSeed);
 
   const clock = parseClockTime(context.time);
   const lastMealMinutes = normalizeMinutes(clock.minutesOfDay - Math.round(lastMealHours * 60));
